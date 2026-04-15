@@ -1,12 +1,12 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { motion } from 'framer-motion'
 import { toast } from 'sonner'
-import { Plus, Trash2, Edit2 } from 'lucide-react'
+import { Plus, Trash2, Edit2, Search } from 'lucide-react'
 
 export default function TransactionsPage() {
   const [transactions, setTransactions] = useState<any[]>([])
@@ -15,6 +15,10 @@ export default function TransactionsPage() {
 
   const [isEdit, setIsEdit] = useState(false)
   const [editId, setEditId] = useState<string | null>(null)
+
+  const [search, setSearch] = useState('')
+  const [filterType, setFilterType] = useState<'all' | 'income' | 'expense'>('all')
+  const [filterCategory, setFilterCategory] = useState('all')
 
   const [formData, setFormData] = useState({
     title: '',
@@ -44,9 +48,7 @@ export default function TransactionsPage() {
   const fetchTransactions = async () => {
     try {
       setLoading(true)
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
+      const { data: { user } } = await supabase.auth.getUser()
 
       if (!user) return
 
@@ -59,14 +61,34 @@ export default function TransactionsPage() {
       if (error) throw error
 
       setTransactions(data || [])
-    } catch (error: any) {
+    } catch {
       toast.error('Failed to fetch transactions')
     } finally {
       setLoading(false)
     }
   }
 
+  const filteredTransactions = useMemo(() => {
+    return transactions.filter((tx) => {
+      const matchSearch =
+        tx.title.toLowerCase().includes(search.toLowerCase()) ||
+        tx.category.toLowerCase().includes(search.toLowerCase())
+
+      const matchType =
+        filterType === 'all' ? true : tx.type === filterType
+
+      const matchCategory =
+        filterCategory === 'all' ? true : tx.category === filterCategory
+
+      return matchSearch && matchType && matchCategory
+    })
+  }, [transactions, search, filterType, filterCategory])
+
+  // 🔥 EDIT + WARNING
   const handleEdit = (tx: any) => {
+    const confirmEdit = confirm('⚠️ Mau edit transaksi ini?')
+    if (!confirmEdit) return
+
     setFormData({
       title: tx.title,
       amount: tx.amount.toString(),
@@ -84,20 +106,18 @@ export default function TransactionsPage() {
     e.preventDefault()
 
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-
+      const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
 
       if (isEdit && editId) {
-        if (!confirm('Yakin mau update transaksi ini?')) return
+        const confirmUpdate = confirm('⚠️ Yakin ingin UPDATE transaksi ini?')
+        if (!confirmUpdate) return
 
-        const { error } = await supabase
+        await supabase
           .from('transactions')
           .update({
             title: formData.title,
-            amount: parseFloat(formData.amount),
+            amount: Number(formData.amount),
             type: formData.type,
             category: formData.category,
             description: formData.description,
@@ -105,94 +125,105 @@ export default function TransactionsPage() {
           .eq('id', editId)
           .eq('user_id', user.id)
 
-        if (error) throw error
-
-        toast.success('Transaction updated!')
+        toast.success('Updated!')
       } else {
-        const { error } = await supabase.from('transactions').insert({
+        await supabase.from('transactions').insert({
           user_id: user.id,
           title: formData.title,
-          amount: parseFloat(formData.amount),
+          amount: Number(formData.amount),
           type: formData.type,
           category: formData.category,
           description: formData.description,
         })
 
-        if (error) throw error
-
-        toast.success('Transaction added!')
+        toast.success('Added!')
       }
-
-      setFormData({
-        title: '',
-        amount: '',
-        type: 'expense',
-        category: 'Other',
-        description: '',
-      })
 
       setShowForm(false)
       setIsEdit(false)
       setEditId(null)
 
       fetchTransactions()
-    } catch (error: any) {
-      toast.error(error.message)
+    } catch (err: any) {
+      toast.error(err.message)
     }
   }
 
+  // 🔥 DELETE + WARNING
   const handleDelete = async (id: string) => {
-    if (!confirm('Yakin mau hapus transaksi ini?')) return
+    const confirmDelete = confirm('⚠️ Yakin mau HAPUS transaksi ini?')
+    if (!confirmDelete) return
 
-    try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return
 
-      if (!user) return
+    await supabase
+      .from('transactions')
+      .delete()
+      .eq('id', id)
+      .eq('user_id', user.id)
 
-      const { error } = await supabase
-        .from('transactions')
-        .delete()
-        .eq('id', id)
-        .eq('user_id', user.id)
-
-      if (error) throw error
-
-      toast.success('Deleted!')
-      fetchTransactions()
-    } catch (error: any) {
-      toast.error('Failed to delete')
-    }
+    toast.success('Deleted!')
+    fetchTransactions()
   }
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-full bg-background text-foreground">
-        <motion.div
-          animate={{ opacity: [0.5, 1, 0.5] }}
-          transition={{ duration: 1.5, repeat: Infinity }}
-        >
-          <div className="text-xl font-bold text-primary">
-            Loading...
-          </div>
-        </motion.div>
+      <div className="flex items-center justify-center h-full">
+        <div className="text-primary animate-pulse text-xl font-bold">
+          Loading...
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="p-8 min-h-screen bg-background text-foreground">
+    <div className="p-8 space-y-6">
 
-      <h1 className="text-3xl font-bold mb-6 text-primary">
+      <h1 className="text-3xl font-bold text-primary">
         Transactions
       </h1>
 
-      {!showForm && (
-        <Button
-          onClick={() => setShowForm(true)}
-          className="mb-6 gap-2 bg-primary hover:opacity-90"
+      {/* SEARCH + FILTER */}
+      <div className="flex flex-wrap gap-3">
+
+        <div className="flex items-center border rounded-lg px-3 bg-card">
+          <Search size={16} />
+          <Input
+            placeholder="Search transaksi..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="border-none focus-visible:ring-0"
+          />
+        </div>
+
+        <select
+          className="border rounded-lg px-3 py-2 bg-background text-foreground dark:bg-card dark:text-foreground"
+          value={filterType}
+          onChange={(e) => setFilterType(e.target.value as any)}
         >
+          <option value="all">All Type</option>
+          <option value="income">Income</option>
+          <option value="expense">Expense</option>
+        </select>
+
+        <select
+          className="border rounded-lg px-3 py-2 bg-background text-foreground dark:bg-card dark:text-foreground"
+          value={filterCategory}
+          onChange={(e) => setFilterCategory(e.target.value)}
+        >
+          <option value="all">All Category</option>
+          {categories.map((c) => (
+            <option key={c} value={c}>
+              {c}
+            </option>
+          ))}
+        </select>
+
+      </div>
+
+      {!showForm && (
+        <Button onClick={() => setShowForm(true)} className="gap-2">
           <Plus size={16} /> Add Transaction
         </Button>
       )}
@@ -203,42 +234,34 @@ export default function TransactionsPage() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           onSubmit={handleSubmit}
-          className="grid gap-4 mb-8 p-6 rounded-2xl border bg-card border-border"
+          className="grid gap-3 p-6 border rounded-xl bg-card"
         >
           <Input
             placeholder="Title"
             value={formData.title}
-            onChange={(e) =>
-              setFormData({ ...formData, title: e.target.value })
-            }
+            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
           />
 
           <Input
             type="number"
             placeholder="Amount"
             value={formData.amount}
-            onChange={(e) =>
-              setFormData({ ...formData, amount: e.target.value })
-            }
+            onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
           />
 
           <select
-            className="border border-border rounded-md px-3 py-2 bg-background text-foreground"
             value={formData.type}
-            onChange={(e) =>
-              setFormData({ ...formData, type: e.target.value })
-            }
+            onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+            className="border p-2 rounded bg-background text-foreground dark:bg-card"
           >
             <option value="expense">Expense</option>
             <option value="income">Income</option>
           </select>
 
           <select
-            className="border border-border rounded-md px-3 py-2 bg-background text-foreground"
             value={formData.category}
-            onChange={(e) =>
-              setFormData({ ...formData, category: e.target.value })
-            }
+            onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+            className="border p-2 rounded bg-background text-foreground dark:bg-card"
           >
             {categories.map((c) => (
               <option key={c}>{c}</option>
@@ -248,20 +271,18 @@ export default function TransactionsPage() {
           <Input
             placeholder="Description"
             value={formData.description}
-            onChange={(e) =>
-              setFormData({ ...formData, description: e.target.value })
-            }
+            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
           />
 
           <div className="flex gap-2">
-            <Button type="submit" className="bg-primary hover:opacity-90">
+            <Button type="submit">
               {isEdit ? 'Update' : 'Add'}
             </Button>
 
             <Button
               type="button"
-              onClick={() => setShowForm(false)}
               variant="outline"
+              onClick={() => setShowForm(false)}
             >
               Cancel
             </Button>
@@ -270,7 +291,7 @@ export default function TransactionsPage() {
       )}
 
       {/* TABLE */}
-      <div className="rounded-2xl border border-border overflow-hidden bg-card">
+      <div className="border rounded-xl overflow-hidden bg-card">
         <table className="w-full">
           <thead className="bg-muted">
             <tr>
@@ -278,46 +299,38 @@ export default function TransactionsPage() {
               <th className="p-3 text-left">Category</th>
               <th className="p-3 text-left">Type</th>
               <th className="p-3 text-right">Amount</th>
-              <th className="p-3 text-left">Date</th>
               <th className="p-3 text-center">Action</th>
             </tr>
           </thead>
 
           <tbody>
-            {transactions.map((tx, idx) => (
-              <motion.tr
-                key={tx.id}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: idx * 0.05 }}
-                className="border-t hover:bg-muted/50"
-              >
+            {filteredTransactions.map((tx) => (
+              <tr key={tx.id} className="border-t">
+
                 <td className="p-3">{tx.title}</td>
                 <td className="p-3">{tx.category}</td>
                 <td className="p-3">{tx.type}</td>
-                <td className="p-3 text-right">
-                  Rp {tx.amount}
-                </td>
-                <td className="p-3">
-                  {new Date(tx.created_at).toLocaleDateString('id-ID')}
-                </td>
+                <td className="p-3 text-right">Rp {tx.amount}</td>
 
-                <td className="p-3 flex justify-center gap-2">
+                {/* 🔥 ACTION COLOR + HOVER */}
+                <td className="p-3 flex gap-2 justify-center">
+
                   <button
                     onClick={() => handleEdit(tx)}
-                    className="text-primary hover:bg-muted p-2 rounded"
+                    className="text-yellow-500 hover:text-yellow-600 hover:bg-yellow-100 dark:hover:bg-yellow-900/30 p-2 rounded transition"
                   >
                     <Edit2 size={16} />
                   </button>
 
                   <button
                     onClick={() => handleDelete(tx.id)}
-                    className="text-destructive hover:bg-muted p-2 rounded"
+                    className="text-red-500 hover:text-red-600 hover:bg-red-100 dark:hover:bg-red-900/30 p-2 rounded transition"
                   >
                     <Trash2 size={16} />
                   </button>
+
                 </td>
-              </motion.tr>
+              </tr>
             ))}
           </tbody>
         </table>

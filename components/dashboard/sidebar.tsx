@@ -9,7 +9,8 @@ import {
   BarChart3,
   LogOut,
   Settings,
-  FileDown, // ✅ TAMBAH INI
+  FileDown,
+  PiggyBank, // ✅ TAMBAH ICON BUDGET
   X,
 } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
@@ -40,15 +41,23 @@ export default function DashboardSidebar({
       icon: BarChart3,
       label: 'Analytics',
     },
+
+    // 🔥 MENU BARU
+    {
+      href: '/dashboard/budget',
+      icon: PiggyBank,
+      label: 'Budgeting',
+    },
+
+    {
+      href: '/dashboard/export',
+      icon: FileDown,
+      label: 'Export Excel',
+    },
     {
       href: '/dashboard/settings',
       icon: Settings,
       label: 'Settings',
-    },
-    {
-      href: '/dashboard/export', // ✅ MENU BARU
-      icon: FileDown,
-      label: 'Export Excel',
     },
   ]
 
@@ -63,7 +72,7 @@ export default function DashboardSidebar({
   }
 
   const handleNavigate = () => {
-    onNavigate?.() // auto close sidebar mobile
+    onNavigate?.()
   }
 
   return (
@@ -73,6 +82,7 @@ export default function DashboardSidebar({
       transition={{ duration: 0.3 }}
       className="w-64 bg-card border-r border-border flex flex-col h-full relative"
     >
+
       {/* MOBILE HEADER */}
       <div className="flex items-center justify-between p-4 border-b border-border md:hidden">
         <h2 className="font-bold text-primary">Menu</h2>
@@ -85,7 +95,7 @@ export default function DashboardSidebar({
         </button>
       </div>
 
-      {/* LOGO DESKTOP */}
+      {/* LOGO */}
       <div className="p-6 border-b border-border hidden md:block">
         <h1 className="text-2xl font-bold text-primary">MASE</h1>
         <p className="text-xs text-muted-foreground mt-1">
@@ -139,6 +149,7 @@ export default function DashboardSidebar({
           MASE by @Daveeed_Iqbaaal
         </p>
       </div>
+
     </motion.aside>
   )
 }
