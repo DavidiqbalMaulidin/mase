@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { supabase } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -15,6 +15,10 @@ export default function DashboardPage() {
   const [expense, setExpense] = useState(0)
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
+
+  // 🔥 USER STATE (FIX UTAMA)
+  const [user, setUser] = useState<any>(null)
+  const hasFetched = useRef(false)
 
   // 🔥 EDIT STATE
   const [isEdit, setIsEdit] = useState(false)
@@ -41,16 +45,30 @@ export default function DashboardPage() {
     'Other',
   ]
 
+  // 🔥 GET USER SEKALI
   useEffect(() => {
-    fetchTransactions()
+    const initUser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+
+      setUser(user)
+    }
+
+    initUser()
   }, [])
+
+  // 🔥 FETCH SETELAH USER ADA (ANTI DOUBLE FETCH)
+  useEffect(() => {
+    if (!user || hasFetched.current) return
+    hasFetched.current = true
+
+    fetchTransactions()
+  }, [user])
 
   const fetchTransactions = async () => {
     try {
       setLoading(true)
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
 
       if (!user) return
 
@@ -108,18 +126,12 @@ export default function DashboardPage() {
     e.preventDefault()
 
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-
       if (!user) return
 
       if (isEdit && editId) {
-        // 🔥 ALERT UPDATE
         const confirmUpdate = window.confirm('Yakin ingin mengupdate transaksi ini?')
         if (!confirmUpdate) return
 
-        // 🔥 FIX: pastikan update kena user yang benar juga
         const { data, error } = await supabase
           .from('transactions')
           .update({
@@ -130,7 +142,7 @@ export default function DashboardPage() {
             description: formData.description,
           })
           .eq('id', editId)
-          .eq('user_id', user.id) // 🔥 PENTING
+          .eq('user_id', user.id)
 
         console.log('UPDATE RESULT:', data, error)
 
@@ -173,13 +185,8 @@ export default function DashboardPage() {
 
   const handleDeleteTransaction = async (id: string) => {
     try {
-      // 🔥 ALERT DELETE
       const confirmDelete = window.confirm('Yakin ingin menghapus transaksi ini?')
       if (!confirmDelete) return
-
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
 
       if (!user) return
 
@@ -187,7 +194,7 @@ export default function DashboardPage() {
         .from('transactions')
         .delete()
         .eq('id', id)
-        .eq('user_id', user.id) // 🔥 FIX juga di delete
+        .eq('user_id', user.id)
 
       if (error) throw error
 
@@ -211,7 +218,6 @@ export default function DashboardPage() {
 
   return (
     <div className="p-8">
-      {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -254,7 +260,6 @@ export default function DashboardPage() {
         </motion.div>
       </div>
 
-      {/* Form */}
       {showForm && (
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -316,7 +321,6 @@ export default function DashboardPage() {
         </motion.div>
       )}
 
-      {/* Button */}
       {!showForm && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-8">
           <Button onClick={() => setShowForm(true)} className="bg-primary hover:bg-primary/90 gap-2">
@@ -326,7 +330,6 @@ export default function DashboardPage() {
         </motion.div>
       )}
 
-      {/* Table */}
       <div className="bg-card border border-border rounded-2xl overflow-hidden">
         <div className="p-6 border-b border-border">
           <h3 className="text-xl font-bold">Recent Transactions</h3>

@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { ThemeProvider } from 'next-themes'
+import { Toaster } from 'sonner'
 import './globals.css'
 
 const geist = Geist({ subsets: ['latin'] })
@@ -38,17 +39,18 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${geist.className} ${geistMono.className} font-sans antialiased`}>
-        
-        {/* 🔥 INI YANG PENTING */}
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-        >
+      <body
+        className={`${geist.className} ${geistMono.className} font-sans antialiased`}
+      >
+        {/* THEME PROVIDER GLOBAL */}
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           {children}
         </ThemeProvider>
 
+        {/* 🔥 TOAST NOTIFICATION FIX (INI YANG KAMU BUTUH) */}
+        <Toaster richColors position="top-right" />
+
+        {/* ANALYTICS */}
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>

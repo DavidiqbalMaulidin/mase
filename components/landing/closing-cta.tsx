@@ -6,6 +6,8 @@ import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
 
 export default function ClosingCTA() {
+  const instagramUsername = "daveeed_iqbaaal" // 🔥 GANTI DI SINI
+
   return (
     <section className="py-20 px-4">
       <div className="container mx-auto max-w-4xl">
@@ -36,6 +38,7 @@ export default function ClosingCTA() {
               <h2 className="text-4xl md:text-5xl font-bold mb-6">
                 Siap Kontrol Keuanganmu?
               </h2>
+
               <p className="text-lg mb-12 text-white/90">
                 Mulai tracking pemasukan dan pengeluaran hari ini, tanpa perlu kartu kredit.
               </p>
@@ -54,6 +57,7 @@ export default function ClosingCTA() {
                   <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>
+
               <Link href="/login">
                 <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10 gap-2">
                   Sudah punya akun?
@@ -69,7 +73,7 @@ export default function ClosingCTA() {
               transition={{ delay: 0.4 }}
               className="text-white/80 text-sm"
             >
-              Gratis selamanya. Tidak butuh kartu kredit. Didukung oleh Supabase untuk keamanan maksimal.
+              Gratis selamanya. Tidak butuh kartu kredit.
             </motion.p>
           </div>
         </motion.div>
@@ -84,10 +88,17 @@ export default function ClosingCTA() {
         >
           <p>
             MASE — Smart Expense Tracker by{' '}
-            <span className="text-primary font-bold">@Daveeed_Iqbaaal</span>
+            <Link
+              href={`https://instagram.com/${instagramUsername}`}
+              target="_blank"
+              className="text-primary font-bold hover:underline transition"
+            >
+              @{instagramUsername}
+            </Link>
           </p>
+
           <p className="mt-2">
-            © 2024 MASE. Semua hak dilindungi.
+            © 2025 MASE. Semua hak dilindungi.
           </p>
         </motion.div>
       </div>

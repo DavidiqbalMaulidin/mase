@@ -6,25 +6,25 @@ import { Star } from 'lucide-react'
 export default function Testimonials() {
   const testimonials = [
     {
-      name: 'User A',
-      role: 'Freelancer',
-      text: 'MASE membantu saya mengontrol keuangan dengan lebih baik. Sekarang saya tahu kemana uang saya pergi setiap bulannya.',
+      name: 'Rizky Pratama',
+      role: 'Freelancer Designer',
+      text: 'Dulu aku sering bingung uang habis ke mana. Setelah pakai MASE, semuanya jadi jelas banget. Sekarang aku bisa kontrol pengeluaran tanpa ribet.',
       rating: 5,
-      avatar: '👨‍💼',
+      avatar: '🎨',
     },
     {
-      name: 'User B',
-      role: 'Student',
-      text: 'Simple tapi powerful. Interface-nya user-friendly dan feature-nya lengkap untuk kebutuhan saya.',
+      name: 'Nadia Putri',
+      role: 'Mahasiswa',
+      text: 'Awalnya cuma coba-coba, tapi ternyata kepake banget. Aku jadi lebih sadar pengeluaran harian dan bisa nabung lebih konsisten.',
       rating: 5,
-      avatar: '👩‍🎓',
+      avatar: '📚',
     },
     {
-      name: 'User C',
-      role: 'Business Owner',
-      text: 'Yang paling saya suka adalah visualisasi data-nya. Jadi lebih mudah untuk membuat keputusan finansial.',
+      name: 'Budi Santoso',
+      role: 'Pemilik Usaha Kecil',
+      text: 'Yang paling membantu itu insight-nya. Aku bisa lihat pola pengeluaran bisnis tanpa harus rekap manual lagi.',
       rating: 5,
-      avatar: '👨‍💼',
+      avatar: '🏪',
     },
   ]
 
@@ -50,6 +50,8 @@ export default function Testimonials() {
   return (
     <section className="py-20 px-4 bg-gradient-to-b from-transparent via-primary/5 to-transparent">
       <div className="container mx-auto max-w-5xl">
+
+        {/* HEADER */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -57,13 +59,16 @@ export default function Testimonials() {
           className="text-center mb-16"
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            Apa Kata <span className="text-primary">User MASE?</span>
+            Apa kata mereka tentang{' '}
+            <span className="text-primary">MASE?</span>
           </h2>
+
           <p className="text-lg text-muted-foreground">
-            Dengarkan pengalaman user kami dengan MASE
+            Cerita nyata dari pengguna yang sudah mencoba mengatur keuangan dengan lebih baik
           </p>
         </motion.div>
 
+        {/* GRID */}
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -78,24 +83,31 @@ export default function Testimonials() {
               whileHover={{ y: -8 }}
               className="bg-card border border-border rounded-2xl p-8 hover:shadow-lg transition-all"
             >
-              {/* Rating */}
+
+              {/* RATING */}
               <div className="flex gap-1 mb-4">
                 {[...Array(testimonial.rating)].map((_, i) => (
-                  <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                  <Star
+                    key={i}
+                    className="h-4 w-4 fill-yellow-400 text-yellow-400"
+                  />
                 ))}
               </div>
 
-              {/* Quote */}
+              {/* TEXT */}
               <p className="text-muted-foreground mb-6 leading-relaxed italic">
                 &quot;{testimonial.text}&quot;
               </p>
 
-              {/* Author */}
+              {/* AUTHOR */}
               <div className="flex items-center gap-4">
                 <div className="text-4xl">{testimonial.avatar}</div>
+
                 <div>
                   <p className="font-bold">{testimonial.name}</p>
-                  <p className="text-sm text-muted-foreground">{testimonial.role}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {testimonial.role}
+                  </p>
                 </div>
               </div>
             </motion.div>

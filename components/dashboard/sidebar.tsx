@@ -10,8 +10,11 @@ import {
   LogOut,
   Settings,
   FileDown,
-  PiggyBank, // ✅ TAMBAH ICON BUDGET
+  PiggyBank,
+  Brain,
   X,
+  Upload,
+  Sparkles, // 🆕 ICON AI ASSISTANT
 } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
@@ -42,11 +45,32 @@ export default function DashboardSidebar({
       label: 'Analytics',
     },
 
-    // 🔥 MENU BARU
+    // 💰 BUDGET
     {
       href: '/dashboard/budget',
       icon: PiggyBank,
       label: 'Budgeting',
+    },
+
+    // 🧠 INSIGHT
+    {
+      href: '/dashboard/insight',
+      icon: Brain,
+      label: 'Insight',
+    },
+
+    // 📸 UPLOAD STRUK
+    {
+      href: '/dashboard/upload-struk',
+      icon: Upload,
+      label: 'Upload Struk',
+    },
+
+    // 🤖 AI ASSISTANT (BARU)
+    {
+      href: '/dashboard/ai-assistant',
+      icon: Sparkles,
+      label: 'AI Assistant',
     },
 
     {

@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input'
 import { motion } from 'framer-motion'
 import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
+import { Eye, EyeOff } from 'lucide-react' // 🔥 TAMBAHAN ICON
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -17,8 +18,24 @@ export default function RegisterPage() {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [loading, setLoading] = useState(false)
 
+  // 🔥 STATE SHOW PASSWORD
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    if (loading) return
+
+    if (!email || !password || !confirmPassword) {
+      toast.error('Semua field wajib diisi')
+      return
+    }
+
+    if (password.length < 6) {
+      toast.error('Password minimal 6 karakter')
+      return
+    }
 
     if (password !== confirmPassword) {
       toast.error('Password tidak sama')
@@ -35,13 +52,13 @@ export default function RegisterPage() {
         password,
       })
 
-      if (error) throw error
+      if (error) {
+        toast.error(error.message || 'Gagal membuat akun', {
+          id: 'register',
+        })
+        return
+      }
 
-      /**
-       * IMPORTANT:
-       * Supabase biasanya TIDAK langsung login
-       * kalau email confirmation aktif
-       */
       if (!data.session) {
         toast.success('Akun dibuat! Cek email untuk verifikasi 🔐', {
           id: 'register',
@@ -63,7 +80,7 @@ export default function RegisterPage() {
       }, 800)
 
     } catch (error: any) {
-      toast.error(error.message || 'Gagal membuat akun', {
+      toast.error(error.message || 'Terjadi kesalahan saat membuat akun', {
         id: 'register',
       })
     } finally {
@@ -94,6 +111,7 @@ export default function RegisterPage() {
           {/* FORM */}
           <form onSubmit={handleRegister} className="space-y-4">
 
+            {/* EMAIL */}
             <div>
               <label className="text-sm mb-2 block">Email</label>
               <Input
@@ -106,30 +124,66 @@ export default function RegisterPage() {
               />
             </div>
 
+            {/* PASSWORD */}
             <div>
               <label className="text-sm mb-2 block">Password</label>
-              <Input
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                disabled={loading}
-                required
-              />
+
+              <div className="relative">
+                <Input
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  disabled={loading}
+                  required
+                  className="pr-10"
+                />
+
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                >
+                  {showPassword ? (
+                    <EyeOff size={18} />
+                  ) : (
+                    <Eye size={18} />
+                  )}
+                </button>
+              </div>
             </div>
 
+            {/* CONFIRM PASSWORD */}
             <div>
               <label className="text-sm mb-2 block">
                 Confirm Password
               </label>
-              <Input
-                type="password"
-                placeholder="••••••••"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                disabled={loading}
-                required
-              />
+
+              <div className="relative">
+                <Input
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  placeholder="••••••••"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  disabled={loading}
+                  required
+                  className="pr-10"
+                />
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setShowConfirmPassword(!showConfirmPassword)
+                  }
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                >
+                  {showConfirmPassword ? (
+                    <EyeOff size={18} />
+                  ) : (
+                    <Eye size={18} />
+                  )}
+                </button>
+              </div>
             </div>
 
             {/* BUTTON */}

@@ -6,28 +6,34 @@ import { CheckCircle } from 'lucide-react'
 export default function WhyMase() {
   const reasons = [
     {
-      title: 'Lebih Cepat dari Excel',
-      description: 'Input transaksi dalam hitungan detik, tidak perlu configure rumus kompleks',
+      title: 'Hemat Waktu, Tanpa Ribet',
+      description:
+        'Catat keuangan dalam hitungan detik. Nggak perlu lagi buka Excel atau hitung manual.',
     },
     {
-      title: 'Lebih Mudah dari Manual Notes',
-      description: 'Semua otomatis tercatat dan tersimpan aman di cloud',
+      title: 'Semua Keuangan Dalam Satu Tempat',
+      description:
+        'Tidak ada lagi catatan tercecer. Semua pemasukan dan pengeluaran tersusun rapi otomatis.',
     },
     {
-      title: 'Visual Finance Tracking',
-      description: 'Chart dan grafik yang cantik membuat data mudah dipahami',
+      title: 'Bikin Keuangan Lebih Mudah Dipahami',
+      description:
+        'Data yang rumit berubah jadi visual yang simpel, jelas, dan enak dilihat.',
     },
     {
-      title: 'Mobile Responsive',
-      description: 'Akses dari phone, tablet, atau desktop kapan saja dimana saja',
+      title: 'Bisa Dipakai Kapan Saja',
+      description:
+        'Mau di HP, laptop, atau tablet — semuanya tetap nyaman dan responsif.',
     },
     {
-      title: 'Real-time Updates',
-      description: 'Dashboard update otomatis setiap kali ada transaksi baru',
+      title: 'Selalu Update Secara Instan',
+      description:
+        'Setiap transaksi langsung tercatat dan langsung terlihat di dashboard kamu.',
     },
     {
-      title: 'Secure & Private',
-      description: 'Data kamu aman dengan enkripsi dan Row Level Security',
+      title: 'Aman & Tenang Dipakai',
+      description:
+        'Data keuangan kamu dijaga dengan sistem yang aman dan hanya bisa diakses oleh kamu sendiri.',
     },
   ]
 
@@ -53,6 +59,8 @@ export default function WhyMase() {
   return (
     <section id="why-mase" className="py-20 px-4">
       <div className="container mx-auto max-w-5xl">
+
+        {/* HEADER */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -60,13 +68,16 @@ export default function WhyMase() {
           className="text-center mb-16"
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            Kenapa Pilih <span className="text-primary">MASE?</span>
+            Kenapa banyak orang memilih{' '}
+            <span className="text-primary">MASE?</span>
           </h2>
-          <p className="text-lg text-muted-foreground">
-            6 alasan mengapa MASE adalah pilihan terbaik untuk tracking keuangan
+
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Cara paling simpel untuk mengatur keuangan tanpa stres, tanpa ribet, dan tanpa bingung lagi.
           </p>
         </motion.div>
 
+        {/* REASONS GRID */}
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -78,12 +89,19 @@ export default function WhyMase() {
             <motion.div
               key={idx}
               variants={itemVariants}
+              whileHover={{ y: -4 }}
               className="flex gap-4 items-start bg-card border border-border rounded-2xl p-6 hover:shadow-lg transition-all"
             >
               <CheckCircle className="h-6 w-6 text-primary flex-shrink-0 mt-1" />
+
               <div>
-                <h3 className="font-bold text-lg mb-2">{reason.title}</h3>
-                <p className="text-muted-foreground">{reason.description}</p>
+                <h3 className="font-bold text-lg mb-2">
+                  {reason.title}
+                </h3>
+
+                <p className="text-muted-foreground">
+                  {reason.description}
+                </p>
               </div>
             </motion.div>
           ))}

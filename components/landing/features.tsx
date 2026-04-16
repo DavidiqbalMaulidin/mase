@@ -6,40 +6,53 @@ import { Zap } from 'lucide-react'
 export default function Features() {
   const features = [
     {
+      icon: '🤖',
+      title: 'AI Financial Assistant',
+      description:
+        'Tanya apa saja tentang keuanganmu — dari total pengeluaran, kategori terbesar, hingga insight bulanan secara instan.',
+      color: 'from-indigo-500 to-indigo-600',
+    },
+    {
       icon: '📊',
-      title: 'Real-time Financial Dashboard',
-      description: 'Pantau total balance, income, dan expense dalam dashboard yang live dan responsive',
+      title: 'Real-Time Financial Overview',
+      description:
+        'Pantau seluruh kondisi keuangan dalam satu dashboard yang cepat, ringan, dan selalu terupdate.',
       color: 'from-blue-500 to-blue-600',
     },
     {
       icon: '💰',
-      title: 'Income & Expense Tracking',
-      description: 'Catat setiap transaksi dengan kategori, deskripsi, dan tanggal yang lengkap',
+      title: 'Smart Income & Expense Tracker',
+      description:
+        'Catat setiap pemasukan dan pengeluaran dengan cepat, lengkap dengan kategori dan detail waktu.',
       color: 'from-green-500 to-green-600',
     },
     {
       icon: '🧠',
       title: 'Smart Category System',
-      description: 'Kategori otomatis dengan 9+ pilihan, dari Food sampai Investment',
+      description:
+        'Transaksi otomatis dikelompokkan agar keuanganmu lebih rapi dan mudah dianalisis.',
       color: 'from-purple-500 to-purple-600',
     },
     {
       icon: '📈',
-      title: 'Analytics & Charts',
-      description: 'Visualisasi data dengan pie chart, bar chart, dan line chart yang interaktif',
+      title: 'Insightful Financial Analytics',
+      description:
+        'Visualisasi data keuangan dalam grafik interaktif untuk melihat pola pengeluaran dengan jelas.',
       color: 'from-pink-500 to-pink-600',
     },
     {
-      icon: '🔐',
-      title: 'Secure Authentication System',
-      description: 'Login aman dengan sistem autentikasi modern dan Row Level Security untuk menjaga privasi data pengguna',
-      color: 'from-cyan-500 to-cyan-600',
+      icon: '📤',
+      title: 'Export Financial Reports',
+      description:
+        'Unduh laporan keuangan dalam format PDF atau CSV untuk kebutuhan pribadi atau analisis lebih lanjut.',
+      color: 'from-orange-500 to-orange-600',
     },
     {
-      icon: '📤',
-      title: 'Export PDF & CSV',
-      description: 'Export laporan keuanganmu dalam format PDF dan CSV untuk analisis lebih lanjut',
-      color: 'from-orange-500 to-orange-600',
+      icon: '⚡',
+      title: 'Lightning Fast Performance',
+      description:
+        'Dirancang agar ringan, cepat, dan nyaman digunakan di semua perangkat.',
+      color: 'from-yellow-500 to-yellow-600',
     },
   ]
 
@@ -65,6 +78,8 @@ export default function Features() {
   return (
     <section id="features" className="py-20 px-4">
       <div className="container mx-auto max-w-6xl">
+
+        {/* HEADER */}
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -80,15 +95,23 @@ export default function Features() {
             <span className="text-sm font-medium">Features</span>
           </motion.div>
 
-          <motion.h2 variants={itemVariants} className="text-4xl md:text-5xl font-bold mb-6">
-            Fitur-fitur <span className="text-primary">Powerful</span> untuk MASE
+          <motion.h2
+            variants={itemVariants}
+            className="text-4xl md:text-5xl font-bold mb-6"
+          >
+            Semua yang kamu butuhkan untuk{' '}
+            <span className="text-primary">mengontrol keuangan</span> dalam satu tempat
           </motion.h2>
 
-          <motion.p variants={itemVariants} className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Semua tools yang kamu butuhkan untuk mengelola keuangan dengan sempurna
+          <motion.p
+            variants={itemVariants}
+            className="text-lg text-muted-foreground max-w-2xl mx-auto"
+          >
+            Dari tracking transaksi sampai insight cerdas berbasis AI — semuanya dirancang untuk memudahkan hidupmu.
           </motion.p>
         </motion.div>
 
+        {/* GRID */}
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -103,21 +126,27 @@ export default function Features() {
               whileHover={{ y: -8, scale: 1.02 }}
               className="group bg-card border border-border rounded-2xl p-8 hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden relative"
             >
-              {/* Gradient background on hover */}
+              {/* hover gradient */}
               <div
                 className={`absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity bg-gradient-to-br ${feature.color}`}
               />
 
               <div className="relative z-10">
                 <div className="text-5xl mb-4">{feature.icon}</div>
+
                 <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition">
                   {feature.title}
                 </h3>
-                <p className="text-muted-foreground leading-relaxed">{feature.description}</p>
+
+                <p className="text-muted-foreground leading-relaxed">
+                  {feature.description}
+                </p>
               </div>
 
-              {/* Bottom accent line */}
-              <div className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${feature.color} transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left`} />
+              {/* accent line */}
+              <div
+                className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${feature.color} transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left`}
+              />
             </motion.div>
           ))}
         </motion.div>

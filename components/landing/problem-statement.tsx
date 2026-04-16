@@ -27,23 +27,25 @@ export default function ProblemStatement() {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.2,
+        staggerChildren: 0.12,
       },
     },
   }
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
+    hidden: { opacity: 0, y: 30 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.6 },
+      transition: { duration: 0.5 },
     },
   }
 
   return (
     <section className="py-20 px-4">
       <div className="container mx-auto max-w-4xl">
+
+        {/* HEADER */}
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -51,29 +53,34 @@ export default function ProblemStatement() {
           variants={containerVariants}
           className="text-center mb-16"
         >
+
           <motion.div
             variants={itemVariants}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-destructive/10 border border-destructive/30 mb-6"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full
+                       bg-red-500/10 border border-red-500/30 mb-6"
           >
-            <AlertCircle className="h-4 w-4 text-destructive" />
-            <span className="text-sm font-medium text-destructive">Masalahnya</span>
+            <AlertCircle className="h-4 w-4 text-red-500" />
+            <span className="text-sm font-medium text-red-600 dark:text-red-400">
+              Masalahnya
+            </span>
           </motion.div>
 
           <motion.h2
             variants={itemVariants}
-            className="text-4xl md:text-5xl font-bold mb-6"
+            className="text-4xl md:text-5xl font-bold mb-6 text-slate-900 dark:text-white"
           >
-            Kenapa Keuangan Kamu <span className="text-destructive">Sulit Dikelola?</span>
+            Kenapa Keuangan Kamu <span className="text-red-500">Sulit Dikelola?</span>
           </motion.h2>
 
           <motion.p
             variants={itemVariants}
-            className="text-lg text-muted-foreground"
+            className="text-lg text-slate-600 dark:text-muted-foreground"
           >
             Mayoritas orang Indonesia kesulitan mengelola keuangan karena tools yang ada terlalu complicated atau tidak user-friendly.
           </motion.p>
         </motion.div>
 
+        {/* CARDS */}
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -81,18 +88,32 @@ export default function ProblemStatement() {
           variants={containerVariants}
           className="grid md:grid-cols-3 gap-8"
         >
+
           {problems.map((problem, idx) => (
             <motion.div
               key={idx}
               variants={itemVariants}
-              whileHover={{ y: -5 }}
-              className="bg-card border border-border rounded-2xl p-8 backdrop-blur-sm hover:shadow-lg transition-all"
+              whileHover={{ y: -6, scale: 1.02 }}
+              className="
+                bg-white dark:bg-card
+                border border-slate-200 dark:border-border
+                rounded-2xl p-8
+                shadow-sm hover:shadow-xl
+                transition-all duration-300
+              "
             >
               <div className="text-5xl mb-4">{problem.icon}</div>
-              <h3 className="text-xl font-bold mb-3">{problem.title}</h3>
-              <p className="text-muted-foreground leading-relaxed">{problem.description}</p>
+
+              <h3 className="text-xl font-bold mb-3 text-slate-900 dark:text-white">
+                {problem.title}
+              </h3>
+
+              <p className="text-slate-600 dark:text-muted-foreground leading-relaxed">
+                {problem.description}
+              </p>
             </motion.div>
           ))}
+
         </motion.div>
       </div>
     </section>
